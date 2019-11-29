@@ -29,9 +29,9 @@
 
 ## Creating the RDS database
 1. Navigate via the services button to **RDS**. This interface may look a bit different than what you've seen so far but it's fairly simple to navigate. **Click the big orange 'Create Database" button.**
-2. You'll be presented 2 options at the top of the page, 'easy create' and 'standard create'. *You may ask yourself why not make it easier? Well because most of the things it tries to simplify, you have already taken care of in previous steps of this tutorial. You've done everything exactly as you want it and you know exactly what kind of infrastructure you have. That said 'easy create may not be a bad option, but you wont learn anything.* That said, **go ahead and select standard create MySQL.**
+2. You'll be presented 2 options at the top of the page, 'easy create' and 'standard create'. *You may ask yourself why not make it easier? Well because most of the things it tries to simplify, you have already taken care of in previous steps of this tutorial. You've done everything exactly as you want it and you know exactly what kind of infrastructure you have. That said 'easy create' may not be a bad option for you in the future, just be careful about what kind of decisions are taken on your behalf. That said, **go ahead and select standard create MySQL.**
 ![User_Tag](https://github.com/DanielJohnHarty/AWS_Relational_DB_With_Python37_Access/blob/master/Images/3.png)
-3. Scroll down the page. Select **free tier** and give your database the name **TestSQLDB**, and create a **user and password combo**.
+3. Scroll down the page. Select **free tier** and give your database instance the name **TestSQLDB**. There is an important difference to understand between what a database instance is, and what a database is.  Your database instance TestSQLDB can contain multiple databases, eachh unique and individual. This database instance is not an actual database but the host instance where you can create and manage the databases in your instance. Who will have access to all databases and the database instance itself? Usually an admin, which you should **assign a name aand password here** too.
 ![User_Tag](https://github.com/DanielJohnHarty/AWS_Relational_DB_With_Python37_Access/blob/master/Images/4.png)
 
 4. Make sure that the database is publicly available so we can later access it from another device:
@@ -40,32 +40,102 @@
 
 5. Assign the security group we created before, **TEST_SQL_DB_SG**
 
-4. As you selected the **free tier template**, most of the remaining options can be left as they are as there would have to be exended usage to incur any charges. One final configuration which is vital is to **designate the Test_SQL_DB_VPC as the VPC host of TestSQLDB**.
+6. As you selected the **free tier template**, most of the remaining options can be left as they are as there would have to be exended usage to incur any charges. One final configuration which is vital is to **designate the Test_SQL_DB_VPC as the VPC host of TestSQLDB**.
 
-5. Finally, make sure that the check box allowing Go ahead and click the final orange "Create Database" button.
+7. Remeber you created a **database instance** before? ***In the additioanl configuration at the end of the form, you can create an actual database.***
 
-## Connecting to your database using the AWS 'Boto' library & Python3.7
-### First things first, this is a tutorial. It is not documentation, it is not exhaustive and it is not 100% sure to be up to date in the future. Take the time to read the [Boto RDS Documentation](http://boto.cloudhackers.com/en/latest/rds_tut.html). It will open your eyes to the possibilities and act as a much better source of technical reference for you in the future.
+![Public Access](https://github.com/DanielJohnHarty/AWS_Relational_DB_With_Python37_Access/blob/master/6.png)
 
-1. You need to use Python for the next steps. I am using using Python 3.7 (I'll just call it Python from here on in). You should be using something later than 3.6 if you want to avoid problems.
-2. **Highly recommended but optional step - ** create a Python environment for this tutorial. Get in to the habit of doing this to ensure you can always separate the one project's Python environment from another and that you can completely avoid dependency version issues. [Here's a good page for you to review related to this topic](https://realpython.com/python-virtual-environments-a-primer/)
+***Not understanding the difference between a database instance and a database on AWS will cause you many houses of head scratching.** Just know that in the create database process, you can create both at the same time.*
+
+8. Finally, make sure that the check box allowing Go ahead and click the final orange "Create Database" button.
+
+## Connecting to your database using the AWS 'pymysql' library & Python3.7
+
+1. You need to use Python for the next steps. **I am using using Python 3.7 but I'll just call it Python from here on in**. You should be using something later than 3.6 if you want to avoid problems.
+
+2. **Highly recommended but optional step ** - create a Python environment for this tutorial. Get in to the habit of doing this to ensure you can always separate the one project's Python environment from another and that you can completely avoid dependency version issues. [Here's a good page for you to review related to this topic](https://realpython.com/python-virtual-environments-a-primer/)
+
 3. OK so you're at the command line/terminal/powershell - whatever your chosen app is. You have created a Python environment for this tutorial and you've activated it. Now you need to install what you need for this part.
 
-**pip install boto3**
+**pip install pymysql**
 
-Once this is done, let's launch Python with the "Python" or "Python3" command (depending on whether you're on Windows, Linux or Mac.
+Once this is done, let's launch Python with the "Python" or "Python3" command (depending on system). If one doesn't work, try the other. 
 
 4. OK no you're on the Python interpreter. It looks like this:
+
 ![User_Tag](https://github.com/DanielJohnHarty/AWS_Relational_DB_With_Python37_Access/blob/master/Images/5_python.png)
 
+
 If you want a much nicer python interpreter, install ipython:
+
 **pip install ipython**
+
 ..and call 'ipython' on the command line to start it. It looks like this:
+
 ![User_Tag](https://github.com/DanielJohnHarty/AWS_Relational_DB_With_Python37_Access/blob/master/Images/5_ipython.png)
 
-It's totally optional but I'm using ipython so don't worry if the images differ slightly from your own standard Python interpreter.
+Using ipython is optional but I'm using ipython so don't worry if the images differ slightly from your own standard Python interpreter. One of the beautiful things about ipython, is that **you can copy and paste multiple lines of code in to the ipython interpreter**.  
 
-5. This is not a Python tutorial as such, so I will just give you a commented script which you can use to connect to your database:
+5. Take a look at the following python script. [The same script can be downloaded from this repository](https://github.com/DanielJohnHarty/AWS_Relational_DB_With_Python37_Access/blob/master/connect_to_db_python_script.py)
+
+```python
+import pymysql # This is a library allowing us to interact with mysql databases using Python
+
+# These are the key variables needed to access you database.
+# You can find them on the AWS RDS page when you click the link to your
+# database instance. 
+
+database_instance_endpoint=<yourDatabaseInstanceEndpointAsString>
+port=3306 # Default port for mysql.
+dbname=<youDatabaseName> # Not your database-instance-name, you database name. In the tutorial, we alled it 'mydb' 
+user=<yourDatabaseUserAsString> # This is the database instance user you defined while creating your database
+password=<yourDatabseUserPasswordAsString> # This is the database instance user's password
+
+# Here we create a connection object 'con'
+con = pymysql.connect(database_instance_endpoint,
+                      user = user,
+                      port = port,
+                      passwd = password,
+                      database = dbname)
+
+# Create a 'cursor' using your connection. You use a cursor to query your db
+cur = con.cursor()
+
+# This sql query creates a `users` table with email, password and id fields
+create_table_qry="""CREATE TABLE IF NOT EXISTS `users` (
+                    `id` int(11) NOT NULL AUTO_INCREMENT,
+                    `email` varchar(255) COLLATE utf8_bin NOT NULL,
+                    `password` varchar(255) COLLATE utf8_bin NOT NULL,
+                     PRIMARY KEY (`id`)
+                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+                     AUTO_INCREMENT=1 ;"""
+
+# The execute method of the cursor will execute SQL commands
+cur.execute(create_table_qry) 
+
+# However, until you call the 'commit' method on your connection object, the AWS database is not syncronised with your changes
+cur.execute(create_table_qry)       
+
+# Well done! Now you have a users table! But it's empty...
+# So let's add a user
+# The following SQL insert query format may look a bit strange but it's a secure way to insert data into a database.
+sql = "INSERT INTO `users` (`email`, `password`) VALUES (%s, %s)"
+cur.execute(sql, ('testingtesting@boing.org', 'so-super-secret'))  
+# This format of inserting secures against something called 'SQL injection'. Google it for more details - it's very clever engineering!
+           
+# The insert has been made but we haven't committed the changes yet. So let's do it:
+con.commit()
+
+# And finally, let's double check that our insert query worked by performing a SELECT query
+cur.execute("SELECT * FROM users")
+
+# When you use a SELECT query to retrieve data from a database, they are stored within your cursor object.
+# You can retrive them one at a time, all at once or in specific quantities. As we only have a small numebr of records, we can can go ahead and 'fetchall' of them:
+cur.fetchall()
+```
+# And voila! If you can see user data appear in your Python interpreter, you have sucessfully connected to your database, created a table, inserted into it and then retrieved from it. All from a remote Python interpreter.
+
 
 
 

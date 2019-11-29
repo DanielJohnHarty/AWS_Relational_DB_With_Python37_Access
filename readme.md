@@ -84,6 +84,8 @@ Using ipython is optional but one of the beautiful things about ipython, is that
 
 5. Take a look at the following python script. [The same script can be downloaded from this repository](https://github.com/DanielJohnHarty/AWS_Relational_DB_With_Python37_Access/blob/master/connect_to_db_python_script.py)
 
+***You will need to add the correct values in the variables section at the top of the script***.
+
 ```python
 import pymysql # This is a library allowing us to interact with mysql databases using Python
 
@@ -139,7 +141,7 @@ cur.execute("SELECT * FROM users")
 # You can retrive them one at a time, all at once or in specific quantities. As we only have a small numebr of records, we can can go ahead and 'fetchall' of them:
 cur.fetchall()
 ```
-# And voila! If you can see user data appear in your Python interpreter, you have sucessfully connected to your database, created a table, inserted into it and then retrieved from it. All from a remote Python interpreter.
+# And voilà! If you can see user data appear in your Python interpreter, you have sucessfully connected to your database, created a table, inserted into it and then retrieved from it. All from a remote Python interpreter.
 
 
 

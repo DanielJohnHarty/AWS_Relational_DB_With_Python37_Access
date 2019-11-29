@@ -31,30 +31,35 @@
 1. Navigate via the services button to **RDS**. This interface may look a bit different than what you've seen so far but it's fairly simple to navigate. **Click the big orange 'Create Database" button.**
 2. You'll be presented 2 options at the top of the page, 'easy create' and 'standard create'. *You may ask yourself why not make it easier? Well because most of the things it tries to simplify, you have already taken care of in previous steps of this tutorial. You've done everything exactly as you want it and you know exactly what kind of infrastructure you have. That said 'easy create' may not be a bad option for you in the future, just be careful about what kind of decisions are taken on your behalf. That said, **go ahead and select standard create MySQL.**
 ![User_Tag](https://github.com/DanielJohnHarty/AWS_Relational_DB_With_Python37_Access/blob/master/Images/3.png)
-3. Scroll down the page. Select **free tier** and give your database instance the name **TestSQLDB**. There is an important difference to understand between what a database instance is, and what a database is.  Your database instance TestSQLDB can contain multiple databases, eachh unique and individual. This database instance is not an actual database but the host instance where you can create and manage the databases in your instance. Who will have access to all databases and the database instance itself? Usually an admin, which you should **assign a name aand password here** too.
+3. Scroll down the page. Select **free tier** and give your database instance the name **TestSQLDB**. There is an important difference to understand between what a database instance is, and what a database is.  Your database instance TestSQLDB can contain multiple databases, each unique and individual. This database instance is not an actual database but the host instance where you can create and manage the databases in your instance. Who will have access to all databases and the database instance itself? Usually an admin, which you should **assign a name and password here too.**
+
 ![User_Tag](https://github.com/DanielJohnHarty/AWS_Relational_DB_With_Python37_Access/blob/master/Images/4.png)
 
 4. Make sure that the database is publicly available so we can later access it from another device:
 
 ![Public Access](https://github.com/DanielJohnHarty/AWS_Relational_DB_With_Python37_Access/blob/master/Images/db_public_access.png)
 
-5. Assign the security group we created before, **TEST_SQL_DB_SG**
+5. Assign the security group we created before, **TEST_SQL_DB_SG**.
 
 6. As you selected the **free tier template**, most of the remaining options can be left as they are as there would have to be exended usage to incur any charges. One final configuration which is vital is to **designate the Test_SQL_DB_VPC as the VPC host of TestSQLDB**.
 
-7. Remeber you created a **database instance** before? ***In the additioanl configuration at the end of the form, you can create an actual database.***
+7. Remember you created a **database instance** before? ***In the additional configuration at the end of the form, you can create an actual database.***
 
-![Public Access](https://github.com/DanielJohnHarty/AWS_Relational_DB_With_Python37_Access/blob/master/6.png)
+![Public Access](https://github.com/DanielJohnHarty/AWS_Relational_DB_With_Python37_Access/blob/master/Images/6.png)
 
 ***Not understanding the difference between a database instance and a database on AWS will cause you many houses of head scratching.** Just know that in the create database process, you can create both at the same time.*
 
-8. Finally, make sure that the check box allowing Go ahead and click the final orange "Create Database" button.
+8. Go ahead and click the final orange "Create Database" button.
 
-## Connecting to your database using the AWS 'pymysql' library & Python3.7
+## Connecting to your database using the 'pymysql' library & Python3.7
 
-1. You need to use Python for the next steps. **I am using using Python 3.7 but I'll just call it Python from here on in**. You should be using something later than 3.6 if you want to avoid problems.
+You need to use Python for the next steps. **I am using using Python 3.7 but I'll just call it Python from here on in**. You should be using something later than 3.6 to ensure future proof code and void compatability issues with the code in this tutorial.
 
-2. **Highly recommended but optional step ** - create a Python environment for this tutorial. Get in to the habit of doing this to ensure you can always separate the one project's Python environment from another and that you can completely avoid dependency version issues. [Here's a good page for you to review related to this topic](https://realpython.com/python-virtual-environments-a-primer/)
+1. Open a command line interface of your choice. If you're not familiar with this term it may mean that you aren't aware that you have one. You do though, for sure. Windows users can search for Powershell or CMD (command prompt). Ubuntu or MACOS users can search for bash, shell or termial.
+
+2. **Highly recommended but optional step **:
+
+Create a Python environment for this tutorial. Get in to the habit of doing this to ensure you can always separate the one project's Python environment from another and that you can completely avoid dependency version issues. [Here's a good page for you to review related to this topic](https://realpython.com/python-virtual-environments-a-primer/)
 
 3. OK so you're at the command line/terminal/powershell - whatever your chosen app is. You have created a Python environment for this tutorial and you've activated it. Now you need to install what you need for this part.
 
@@ -62,12 +67,12 @@
 
 Once this is done, let's launch Python with the "Python" or "Python3" command (depending on system). If one doesn't work, try the other. 
 
-4. OK no you're on the Python interpreter. It looks like this:
+4. OK so now you're on the Python interpreter. It looks like this:
 
 ![User_Tag](https://github.com/DanielJohnHarty/AWS_Relational_DB_With_Python37_Access/blob/master/Images/5_python.png)
 
 
-If you want a much nicer python interpreter, install ipython:
+If you want a much nicer python interpreter, install ***ipython***:
 
 **pip install ipython**
 
@@ -75,7 +80,7 @@ If you want a much nicer python interpreter, install ipython:
 
 ![User_Tag](https://github.com/DanielJohnHarty/AWS_Relational_DB_With_Python37_Access/blob/master/Images/5_ipython.png)
 
-Using ipython is optional but I'm using ipython so don't worry if the images differ slightly from your own standard Python interpreter. One of the beautiful things about ipython, is that **you can copy and paste multiple lines of code in to the ipython interpreter**.  
+Using ipython is optional but one of the beautiful things about ipython, is that **you can copy and paste multiple lines of code in to the ipython interpreter**.  
 
 5. Take a look at the following python script. [The same script can be downloaded from this repository](https://github.com/DanielJohnHarty/AWS_Relational_DB_With_Python37_Access/blob/master/connect_to_db_python_script.py)
 

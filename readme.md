@@ -154,7 +154,7 @@ cur.execute("SELECT * FROM users")
 # You can retrive them one at a time, all at once or in specific quantities. As we only have a small number of records, we can can go ahead and 'fetchall' of them:
 cur.fetchall()
 
-# If you can see user data appear in your Python interpreter, you have sucessfully connected to your AWS hosted database, created a table, inserted into it and then retrieved from it. All from a remote Python interpreter.
+# End of script
 ```
 # If you can see user data appear in your Python interpreter, you have sucessfully connected to your database, created a table, inserted into it and then retrieved from it. All from a remote Python interpreter.
 
